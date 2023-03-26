@@ -29,18 +29,22 @@ class BiaAssistant {
 
     var url = Uri.parse('https://api.openai.com/v1/completions');
 
-    var res = await http
-        .post(url, headers: headers, body: data)
-        .onError((error, stackTrace) => http.Response(error.toString(), 200));
+    try {
+      var res = await http
+          .post(url, headers: headers, body: data)
+          .onError((error, stackTrace) => http.Response(error.toString(), 200));
 
-    toReturn = ChatGptResponse(
-        text: jsonDecode(utf8.decode(res.bodyBytes))['choices'][0]['text']);
+      toReturn = ChatGptResponse(
+          text: jsonDecode(utf8.decode(res.bodyBytes))['choices'][0]['text']);
+    } catch (e) {
+      print("Error getting to chatGPT: $e");
+    }
 
     return toReturn;
   }
 
   static const _OPENAI_API_KEY =
-      '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';
+      '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';
 
   static const _prePromptInstruction =
       r'''

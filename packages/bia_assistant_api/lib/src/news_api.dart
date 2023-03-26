@@ -24,6 +24,9 @@ class NewsApi {
           .get(url)
           .onError((error, stackTrace) => http.Response(error.toString(), 200));
 
+      // final response =
+      //     await http.get(url, headers: {'Content-Type': 'text/plain'});
+
       // final List<dynamic> newsItemsJsonList =
       //     jsonDecode(utf8.decode(response.bodyBytes))["data"];
 
@@ -35,7 +38,7 @@ class NewsApi {
           .toList();
       return toReturn;
     } catch (e) {
-      print("Error $e");
+      print("ERROR FETCHING DATA: $e");
       rethrow;
     }
   }
@@ -50,8 +53,10 @@ class NewsItem {
 
   static NewsItem fromMarketAuxJson(Map<String, dynamic> json) {
     return NewsItem(
-        title: json["title"] ?? "ErrorTitle",
-        body: json["description"] ?? "ErrorDescription",
-        imgUrl: json["urlToImage"]);
+      title: json["title"] ?? "ErrorTitle",
+      body: json["description"] ?? "ErrorDescription",
+      imgUrl: json["urlToImage"],
+      // imgUrl: json["image_url"],
+    );
   }
 }
