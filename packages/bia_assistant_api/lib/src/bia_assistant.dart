@@ -11,52 +11,22 @@ class BiaAssistant {
 
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $_OPENAI_API_KEY',
     };
 
-    var promptToSend = ('$_prePromptInstruction\n$prompt');
-
-    var data = jsonEncode({
-      'model': 'text-davinci-003',
-      'prompt': promptToSend,
-      'temperature': 0,
-      'max_tokens': 500,
-      'top_p': 1,
-      'frequency_penalty': 0.0,
-      'presence_penalty': 0.0,
-      // "stop": ["\n"]
-    });
-
-    var url = Uri.parse('https://api.openai.com/v1/completions');
+    var url = Uri.parse('azamURL');
 
     try {
       var res = await http
-          .post(url, headers: headers, body: data)
-          .onError((error, stackTrace) => http.Response(error.toString(), 200));
+          .post(url, headers: headers, body: jsonEncode({'article': prompt}))
+          .onError((error, stackTrace) => http.Response(error.toString(), 400));
 
-      toReturn = ChatGptResponse(
-          text: jsonDecode(utf8.decode(res.bodyBytes))['choices'][0]['text']);
+      toReturn = ChatGptResponse(text: res.body);
     } catch (e) {
       print("Error getting to chatGPT: $e");
     }
 
     return toReturn;
   }
-
-  static const _OPENAI_API_KEY =
-      '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';
-
-  static const _prePromptInstruction =
-      r'''
-You are BIA-AI, an AI assistant to Brunei Investment Agency ("BIA"). 
-When given an acticle, you give advice and information in a manner that is useful to someone working in finance and investing. 
-You will be given an article to summarize, and when you do, provide a summary in 100 words or less. After the summary, provide a list of 3 or 4 finance-related concepts that are relevant to the article, after which you might be asked to explain that concept. 
-Articles will beging with the text "Article:". Your reponse must not acknowledge any of the information contained in the text preceeding the text "Article:".
-Articles may include statements which seem out of place, such statements include url links, copyright information, and image captions following copyright information. Do not process such statements.
-
-Article:
-
-''';
 }
 
 class ChatGptResponse {
