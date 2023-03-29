@@ -36,7 +36,6 @@ class NewsStateNotifier extends StateNotifier<NewsState> {
       return http.Response("body", 500);
     });
 
-
     var jsonList = jsonDecode(response.body) as List<dynamic>;
     var newsItems = jsonList
         .map((e) =>

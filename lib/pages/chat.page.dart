@@ -20,15 +20,15 @@ class _ChagePageState extends ConsumerState<ChagePage> {
     return Scaffold(
       appBar: AppBar(title: Text('Chat Page')),
       body: Chat(
-          messages: state.messages,
-          onSendPressed: _onSendPressed,
-          user: types.User(id: "User", firstName: "User"),
-          ),
+        messages: state.messages,
+        onSendPressed: _onSendPressed,
+        user: types.User(id: "User", firstName: "User"),
+      ),
     );
   }
 
   _onSendPressed(types.PartialText partialText) {
     ref.read(aiStateNotifierProvider.notifier).sendMessage(partialText);
-    ref.read(aiStateNotifierProvider.notifier).getAiMessage(partialText);
+    ref.read(aiStateNotifierProvider.notifier).getAiMessage();
   }
 }

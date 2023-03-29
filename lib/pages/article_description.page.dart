@@ -66,18 +66,20 @@ class _ArticleDescriptionPageState
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: AnimatedTextKit(
-                  animatedTexts: [
-                    TypewriterAnimatedText(
-                        'Running Chat-GPT With Custom BIA-Assistant Prompt Mode',
-                        textStyle: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold))
-                  ],
-                  displayFullTextOnTap: true,
-                  isRepeatingAnimation: false,
-                  repeatForever: false,
-                  totalRepeatCount: 0,
-                ),
+                // child: AnimatedTextKit(
+                //   animatedTexts: [
+                //     TypewriterAnimatedText(
+                //         Widget.,
+                //         textStyle: TextStyle(
+                //             fontSize: 24, fontWeight: FontWeight.bold))
+                //   ],
+                //   displayFullTextOnTap: true,
+                //   isRepeatingAnimation: false,
+                //   repeatForever: false,
+                //   totalRepeatCount: 0,
+                // ),
+                child:
+                    Text(widget.newsItem.title, style: TextStyle(fontSize: 24)),
               ),
               Divider(),
               Padding(
