@@ -54,7 +54,7 @@ class NewsItem {
   static NewsItem fromMarketAuxJson(Map<String, dynamic> json) {
     return NewsItem(
       title: json["title"] ?? "ErrorTitle",
-      body: json["description"] ?? "ErrorDescription",
+      body: json["description"] ?? "",
       imgUrl: json["urlToImage"],
       // imgUrl: json["image_url"],
     );

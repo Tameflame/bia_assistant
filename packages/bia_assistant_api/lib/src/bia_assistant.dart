@@ -43,8 +43,48 @@ class BiaAssistant {
     return toReturn;
   }
 
+
+  static Future<ChatGptResponse> getChatResponse({
+    required String prompt,
+  }) async {
+    var toReturn = ChatGptResponse(text: "ERROR PLEASE TRY AGAIN");
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $_OPENAI_API_KEY',
+    };
+
+    var promptToSend = ('$_preChatPromptInstruction\n$prompt');
+
+    var data = jsonEncode({
+      'model': 'text-davinci-003',
+      'prompt': promptToSend,
+      'temperature': 0,
+      'max_tokens': 100,
+      'top_p': 1,
+      'frequency_penalty': 0.5,
+      'presence_penalty': 0.0,
+      // "stop": ["\n"]
+    });
+
+    var url = Uri.parse('https://api.openai.com/v1/completions');
+
+    try {
+      var res = await http
+          .post(url, headers: headers, body: data)
+          .onError((error, stackTrace) => http.Response(error.toString(), 200));
+
+      toReturn = ChatGptResponse(
+          text: jsonDecode(utf8.decode(res.bodyBytes))['choices'][0]['text']);
+    } catch (e) {
+      print("Error getting to chatGPT: $e");
+    }
+
+    return toReturn;
+  }
+
   static const _OPENAI_API_KEY =
-      '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';
+      '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';
 
   static const _prePromptInstruction =
       r'''
@@ -55,6 +95,18 @@ Articles will beging with the text "Article:". Your reponse must not acknowledge
 Articles may include statements which seem out of place, such statements include url links, copyright information, and image captions following copyright information. Do not process such statements.
 
 Article:
+
+''';
+
+
+  static const _preChatPromptInstruction =
+      r'''
+You are BIA-Assistant, an AI assistant to Brunei Investment Agency ("BIA"), the sovereign wealth fund of the country of Brunei. 
+When given a message, you give advice and information in a manner that is useful to someone who works at a sovereign wealth fund and manages investments in Hedge Funds, Private Equity Funds, the Stock Market, and Real Estate. 
+You will continue the conversation shown below, and respond as BIA-Assistant. The conversation is with User, who is someone who works at Brunei Investment Agency as an investment manager.
+Your responses must be 50 words or less.
+
+Conversation:
 
 ''';
 }
