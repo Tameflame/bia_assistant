@@ -13,12 +13,19 @@ class BiaAssistant {
       'Content-Type': 'application/json',
     };
 
-    var url = Uri.parse('azamURL');
+    var url = Uri.parse(
+        'https://avo-test-api-4epvpy2kbq-as.a.run.app/aiarticle');
 
     try {
+      // var res = await http
+      //     .post(url, headers: headers, body: jsonEncode({'article': prompt}))
+      //     .onError((error, stackTrace) => http.Response(error.toString(), 400));
+
       var res = await http
-          .post(url, headers: headers, body: jsonEncode({'article': prompt}))
+          .get(url, headers: headers)
           .onError((error, stackTrace) => http.Response(error.toString(), 400));
+
+      print("Headers: ${res.headers}");
 
       toReturn = ChatGptResponse(text: res.body);
     } catch (e) {

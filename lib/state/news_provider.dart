@@ -27,7 +27,7 @@ class NewsStateNotifier extends StateNotifier<NewsState> {
     // var newsItems = await NewsApi.getLatestNews(limit: limit);
 
     var response = await http.post(
-      Uri.parse('https://avo-test-api-4epvpy2kbq-as.a.run.app/'),
+      Uri.parse('https://avo-test-api-4epvpy2kbq-as.a.run.app/api/news'),
       headers: {
         // 'Content-Type': 'text/plain',
       },
@@ -35,6 +35,7 @@ class NewsStateNotifier extends StateNotifier<NewsState> {
       print("Error fetching thing: $error");
       return http.Response("body", 500);
     });
+
 
     var jsonList = jsonDecode(response.body) as List<dynamic>;
     var newsItems = jsonList

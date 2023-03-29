@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bia_assistant_api/bia_assistant_api.dart';
+import 'package:http/http.dart' as http;
 
 class AiState {
   final String text;
@@ -56,35 +59,47 @@ class AiStateNotifier extends StateNotifier<AiState> {
   }
 
   Future<void> getAiMessage(types.PartialText partialText) async {
-    var newMessage = partialText.text;
+    var messages = state.messages
+        .map<Map<String, dynamic>>((message) => {
+              message.author.id: message.text,
+            })
+        .toList();
 
-    var prompt = "";
+    messages.add({
+      'role': 'User',
+      'content': partialText.text,
+    });
 
-    for (var message in state.messages) {
-      types.TextMessage;
+    try {
+      var responseGPTMessage = await http.post(
+        Uri.parse('https://avo-test-api-4epvpy2kbq-as.a.run.app/api/ai/chat'),
+        body: {'messages': jsonEncode(messages)},
+        headers: {
+          // 'Content-Type': 'application/json',
+        },
+      );
 
-      prompt += "\n${message.author.id}: ${message.text}";
+      var responseJson = jsonDecode(responseGPTMessage.body);
+      var responseText = responseJson['choices'][0]['message']['content'];
+
+      var responseMessage = types.TextMessage(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          author: types.User(id: "BIA-Assistant"),
+          text: responseText);
+
+      var newMessageList = <types.TextMessage>[
+        responseMessage,
+        ...state.messages,
+      ];
+
+      state = AiState(
+          text: state.text,
+          loadingStatus: AiLoadingStatus.loaded,
+          messages: newMessageList);
+    } catch (e) {
+      print('error fetching chat message: $e');
+      rethrow;
     }
-
-    prompt += "\n User: $newMessage \nBIA-Assistant: ";
-
-    var responseGPTMessage = await BiaAssistant.getChatResponse(prompt: prompt);
-    var responseText = responseGPTMessage.text;
-
-    var responseMessage = types.TextMessage(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        author: types.User(id: "BIA-Assistant"),
-        text: responseText.substring(1));
-
-    var newMessageList = <types.TextMessage>[
-      responseMessage,
-      ...state.messages,
-    ];
-
-    state = AiState(
-        text: state.text,
-        loadingStatus: AiLoadingStatus.loaded,
-        messages: newMessageList);
   }
 }
 
